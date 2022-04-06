@@ -31,3 +31,4 @@ public class Main {
 			f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
 		}
 }
+//This is a test commit
