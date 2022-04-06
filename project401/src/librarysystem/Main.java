@@ -31,6 +31,3 @@ public class Main {
 			f.setLocation(((width - frameWidth) / 2), (height - frameHeight) / 3);
 		}
 }
-//one more
-//Feven's Comment'
-//Charles Comment
