@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import business.ControllerInterface;
 import business.LoginException;
 import business.SystemController;
+import dataaccess.Auth;
 import dataaccess.DataAccessFacade;
 
 /*
@@ -213,6 +214,20 @@ public class LoginWindow extends JFrame implements LibWindow {
 					LoginWindow.INSTANCE.setVisible(false);
 					LibrarySystem.INSTANCE.repaint();
 					LibrarySystem.INSTANCE.setVisible(true);
+					//CODE FROM LIBRARYSYSTEM Line**************************************************************************************************
+				 	   if(SystemController.currentAuth == Auth.LIBRARIAN) {
+					 		  LibrarySystem.INSTANCE.librarianOptions.setVisible(true);
+					 		  LibrarySystem.INSTANCE.repaint();
+					 	   }
+					 	  if(SystemController.currentAuth == Auth.ADMIN) {
+					 		 LibrarySystem.INSTANCE.adminOptions.setVisible(true);
+					 		  LibrarySystem.INSTANCE.repaint();
+					 	  }
+					 	 if(SystemController.currentAuth == Auth.BOTH) {
+					 		LibrarySystem.INSTANCE.librarianOptions.setVisible(true);
+					 		LibrarySystem.INSTANCE.adminOptions.setVisible(true);
+					 		  LibrarySystem.INSTANCE.repaint();
+					 	 }	
 					
 				} catch (LoginException e) {
 					JOptionPane.showMessageDialog(this, e.getMessage());
