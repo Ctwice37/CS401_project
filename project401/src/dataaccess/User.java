@@ -7,9 +7,11 @@ final public class User implements Serializable {
 	private static final long serialVersionUID = 5147265048973262104L;
 
 	private String id;
-	
 	private String password;
 	private Auth authorization;
+	
+	
+	
 	User(String id, String pass, Auth  auth) {
 		this.id = id;
 		this.password = pass;

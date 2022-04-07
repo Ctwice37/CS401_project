@@ -25,8 +25,8 @@ import dataaccess.Auth;
  * 	these will be set visible or invisible based on authentication
  */
 
-public class LibrarySystem extends JFrame implements LibWindow {
-	ControllerInterface ci = new SystemController();
+public class LibrarySystem  extends JFrame implements LibWindow {
+	SystemController ci = new SystemController();
 	public final static LibrarySystem INSTANCE =new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
@@ -37,9 +37,9 @@ public class LibrarySystem extends JFrame implements LibWindow {
     
     //added 4/6 @rstephens:
     JMenu librarianOptions;
-    JMenuItem newMember, addBookCopy, addBook;
-    JMenu adminOptions;
     JMenuItem checkout, printCheckoutRecord, checkOverdue;
+    JMenu adminOptions;
+    JMenuItem newMember, addBookCopy, addBook;
     //=======================
     private static LibWindow[] allWindows = { 
     	LibrarySystem.INSTANCE,
@@ -108,24 +108,30 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   librarianOptions = new JMenu("Librarian"); 
  	   menuBar.add(librarianOptions);
  	   librarianOptions.setVisible(false);
+ 	   
  	   adminOptions = new JMenu("Admin");
- 	   adminOptions.setVisible(false);
  	   menuBar.add(adminOptions);
-
+   	   adminOptions.setVisible(false);
+   	   
  	 	//visibility set by login credentials
-	 	   if(SystemController.currentAuth == Auth.LIBRARIAN)
+	 	   if(SystemController.currentAuth == Auth.LIBRARIAN) {
 	 		  librarianOptions.setVisible(true);
-	 	  if(SystemController.currentAuth == Auth.ADMIN)
+	 		  LibrarySystem.INSTANCE.repaint();
+	 	   }
+	 	  if(SystemController.currentAuth == Auth.ADMIN) {
 	 		  adminOptions.setVisible(true);
+	 		  LibrarySystem.INSTANCE.repaint();
+	 	  }
 	 	 if(SystemController.currentAuth == Auth.BOTH) {
 	 		librarianOptions.setVisible(true);
 	 		 adminOptions.setVisible(true);
-	 	 }
-	 	 
+	 		  LibrarySystem.INSTANCE.repaint();
+	 	 }	 	   
+
  	   //TODO set menu items
  	   //newMember, addBookCopy, addBook;
  	   //checkout, printCheckoutRecord, checkOverdue;
- 	//=====================   
+	 //=====================   
     }
     
     class LoginListener implements ActionListener {

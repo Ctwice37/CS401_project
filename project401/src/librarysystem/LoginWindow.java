@@ -200,24 +200,19 @@ public class LoginWindow extends JFrame implements LibWindow {
     		
     			String usrname = username.getText().trim();
     			String pass = password.getText().trim();
+    			
     			if(usrname.length() == 0 || pass.length() == 0) {
     				JOptionPane.showMessageDialog(this,"Id and Password fields must be nonempty");
-    				//username.setText(null);
 				}
     			
-//				TODO @rstephens is this the correct implementation?
-//					multiple instances may be a problem?
-    			SystemController sc = new SystemController();
     			try {
-					sc.login(usrname, pass);
-					JOptionPane.showMessageDialog(this,"Successful Login");
-					//TODO return to main menu
-					//wait
-					//LibrarySystem.hideAllWindows();
-					LoginWindow.INSTANCE.setVisible(false);
-					LibrarySystem.INSTANCE.setVisible(true);
-					//set new menus visible based on auth
+    				LibrarySystem.INSTANCE.ci.login(usrname, pass);
 					
+					JOptionPane.showMessageDialog(this,"Successful Login");
+					
+					LoginWindow.INSTANCE.setVisible(false);
+					LibrarySystem.INSTANCE.repaint();
+					LibrarySystem.INSTANCE.setVisible(true);
 					
 				} catch (LoginException e) {
 					JOptionPane.showMessageDialog(this, e.getMessage());
