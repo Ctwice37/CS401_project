@@ -18,6 +18,9 @@ import javax.swing.JPanel;
 import business.ControllerInterface;
 import business.SystemController;
 import dataaccess.Auth;
+import librarysystem.LibrarySystem.AddBookCopyListener;
+import librarysystem.LibrarySystem.AddBookListener;
+import librarysystem.LibrarySystem.PrintCheckedRecordListener;
 
 /*
  * Functionality added 4/6 @rstephens:
@@ -42,13 +45,18 @@ public class LibrarySystem  extends JFrame implements LibWindow {
     JMenu librarianOptions;
     JMenuItem checkout, printCheckoutRecord, checkOverdue;
     JMenu adminOptions;
-    JMenuItem newMember, addBookCopy, addBook;
+    JMenuItem newMember, addBookCopy, addBook,printCheckRecord;
     //=======================
     private static LibWindow[] allWindows = { 
     	LibrarySystem.INSTANCE,
 		LoginWindow.INSTANCE,
 		AllMemberIdsWindow.INSTANCE,	
-		AllBookIdsWindow.INSTANCE
+		AllBookIdsWindow.INSTANCE,
+		// TaoWu start
+		AddBookCopyWindow.INSTANCE,
+		AddBookWindow.INSTANCE,
+		PrintCheckedRecordWindow.INSTANCE
+		// TaoWu end
 	};
     	
 	public static void hideAllWindows() {
@@ -104,9 +112,25 @@ public class LibrarySystem  extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
+ 	   // TaoWu start
+	   addBookCopy = new JMenuItem("Add a bookCopy");
+	   addBookCopy.addActionListener(new AddBookCopyListener());
+	   addBook = new JMenuItem("Add a book");
+	   addBook.addActionListener(new AddBookListener());
+	   printCheckRecord = new JMenuItem("Print the checked record");
+	   printCheckRecord.addActionListener(new PrintCheckedRecordListener());
+	   addBookCopy.setEnabled(false);
+	   addBook.setEnabled(false);
+	   printCheckRecord.setEnabled(false);
+	   // TaoWu end
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
+ 	   // TaoWu start
+	   options.add(addBookCopy);
+	   options.add(addBook);
+	   options.add(printCheckRecord);
+	   // TaoWu end
  	//added 4/6 @rstephens:
  	   librarianOptions = new JMenu("Librarian"); 
  	   menuBar.add(librarianOptions);
@@ -203,6 +227,40 @@ public class LibrarySystem  extends JFrame implements LibWindow {
 		}
     	
     }
+    // TaoWu start
+ 	class AddBookCopyListener implements ActionListener {
+
+ 		@Override
+ 		public void actionPerformed(ActionEvent e) {
+ 			LibrarySystem.hideAllWindows();
+ 			AddBookCopyWindow.INSTANCE.init();
+ 			Util.centerFrameOnDesktop(AddBookCopyWindow.INSTANCE);
+ 			AddBookCopyWindow.INSTANCE.setVisible(true);
+ 		}
+ 	}
+
+ 	class AddBookListener implements ActionListener {
+
+ 		@Override
+ 		public void actionPerformed(ActionEvent e) {
+ 			LibrarySystem.hideAllWindows();
+ 			AddBookWindow.INSTANCE.init();
+ 			Util.centerFrameOnDesktop(AddBookWindow.INSTANCE);
+ 			AddBookWindow.INSTANCE.setVisible(true);
+ 		}
+ 	}
+
+ 	class PrintCheckedRecordListener implements ActionListener {
+
+ 		@Override
+ 		public void actionPerformed(ActionEvent e) {
+ 			LibrarySystem.hideAllWindows();
+ 			PrintCheckedRecordWindow.INSTANCE.init();
+ 			Util.centerFrameOnDesktop(PrintCheckedRecordWindow.INSTANCE);
+ 			PrintCheckedRecordWindow.INSTANCE.setVisible(true);
+ 		}
+ 	}
+ 	// TaoWu end
 
 	@Override
 	public boolean isInitialized() {

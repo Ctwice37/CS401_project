@@ -228,7 +228,18 @@ public class LoginWindow extends JFrame implements LibWindow {
 					 		LibrarySystem.INSTANCE.adminOptions.setVisible(true);
 					 		  LibrarySystem.INSTANCE.repaint();
 					 	 }	
-					
+					 	   // TaoWu start
+							if (Auth.ADMIN == LibrarySystem.INSTANCE.ci.currentAuth) {
+								LibrarySystem.INSTANCE.addBookCopy.setEnabled(true);
+								LibrarySystem.INSTANCE.addBook.setEnabled(true);
+							} else if (Auth.LIBRARIAN == LibrarySystem.INSTANCE.ci.currentAuth) {
+								LibrarySystem.INSTANCE.printCheckRecord.setEnabled(true);
+							} else if (Auth.BOTH == LibrarySystem.INSTANCE.ci.currentAuth) {
+								LibrarySystem.INSTANCE.addBookCopy.setEnabled(true);
+								LibrarySystem.INSTANCE.addBook.setEnabled(true);
+								LibrarySystem.INSTANCE.printCheckRecord.setEnabled(true);
+							}
+							// TaoWu end
 				} catch (LoginException e) {
 					JOptionPane.showMessageDialog(this, e.getMessage());
 				}
