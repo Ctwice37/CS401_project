@@ -11,6 +11,7 @@ import java.util.List;
 
 import business.Book;
 import business.BookCopy;
+import business.CheckoutRecordEntry;
 import business.LibraryMember;
 import dataaccess.DataAccessFacade.StorageType;
 
@@ -25,7 +26,15 @@ public class DataAccessFacade implements DataAccess {
 			+ "/src/dataaccess/storage";
 	public static final String DATE_PATTERN = "MM/dd/yyyy";
 	
-	//implement: other save operations
+	//added @rstephens
+	public void saveCheckoutRecord(String memID, BookCopy checkoutBook) {
+		HashMap<String, LibraryMember> mems = readMemberMap();
+		LibraryMember member = mems.get(memID);
+		member.getCheckoutRecord().addCheckoutRecordEntries(new CheckoutRecordEntry(checkoutBook));
+		mems.put(memID, member);
+		saveToStorage(StorageType.MEMBERS, mems);	
+	}
+	//====================
 	public void saveNewMember(LibraryMember member) {
 		HashMap<String, LibraryMember> mems = readMemberMap();
 		String memberId = member.getMemberId();
