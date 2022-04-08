@@ -1,5 +1,6 @@
 package dataaccess;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.List;
 import business.Address;
 import business.Author;
 import business.Book;
+import business.CheckoutRecord;
+import business.CheckoutRecordEntry;
 import business.LibraryMember;
 
 /**
@@ -59,6 +62,19 @@ public class TestData {
 		libraryMember = new LibraryMember("1004", "Ricardo", "Montalbahn", "641-472-2871", addresses.get(7));
 		members.add(libraryMember);
 		
+		// TaoWu start
+		libraryMember = new LibraryMember("1009", "Andy", "Rogers", "641-223-2211", addresses.get(4),checkoutRecords.get(0));
+		boolean b1 = libraryMember.getCheckoutRecord().getCheckoutRecordEntries().get(0).getBookCopy().isAvailable();
+		if(b1) {
+			libraryMember.getCheckoutRecord().getCheckoutRecordEntries().get(0).getBookCopy().changeAvailability();
+		}
+		boolean b2 = libraryMember.getCheckoutRecord().getCheckoutRecordEntries().get(1).getBookCopy().isAvailable();
+		if(b2) {
+			libraryMember.getCheckoutRecord().getCheckoutRecordEntries().get(1).getBookCopy().changeAvailability();
+		}
+		members.add(libraryMember);
+		// TaoWu end
+		
 		DataAccessFacade.loadMemberMap(members);	
 	}
 	
@@ -107,4 +123,17 @@ public class TestData {
 			add(new User("103", "111", Auth.BOTH));
 		}
 	};
+	
+	// TaoWu start
+		List<CheckoutRecord> checkoutRecords = new ArrayList<CheckoutRecord>() {
+			{
+				CheckoutRecord c = new CheckoutRecord();
+				c.addCheckoutRecordEntries(new CheckoutRecordEntry(LocalDate.of(2020, 11, 2),
+						LocalDate.of(2020, 11, 2), allBooks.get(0).getCopies()[0]));
+				c.addCheckoutRecordEntries(new CheckoutRecordEntry(LocalDate.of(2020, 6, 2),
+						LocalDate.of(2020, 5, 2), allBooks.get(0).getCopies()[0]));
+				add(c);
+			}
+		};
+		// TaoWu end
 }

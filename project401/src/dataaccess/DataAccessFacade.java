@@ -61,7 +61,7 @@ public class DataAccessFacade implements DataAccess {
 	///// - used just once at startup  
 	
 		
-	static void loadBookMap(List<Book> bookList) {
+	public static void loadBookMap(List<Book> bookList) {
 		HashMap<String, Book> books = new HashMap<String, Book>();
 		bookList.forEach(book -> books.put(book.getIsbn(), book));
 		saveToStorage(StorageType.BOOKS, books);
