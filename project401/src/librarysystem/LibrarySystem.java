@@ -15,13 +15,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import business.ControllerInterface;
-import business.SystemController;
+import business.*;
 import dataaccess.Auth;
-import librarysystem.LibrarySystem.AddBookCopyListener;
-import librarysystem.LibrarySystem.AddBookListener;
-import librarysystem.LibrarySystem.PrintCheckedRecordListener;
-
+import dataaccess.DataAccessFacade;
+import librarysystem.*;
 /*
  * Functionality added 4/6 @rstephens:
  * added Librarian and Admin menus to menu bar(which will contain new member, checkout, add book, etc functions)
@@ -30,6 +27,7 @@ import librarysystem.LibrarySystem.PrintCheckedRecordListener;
 
 public class LibrarySystem  extends JFrame implements LibWindow {
 
+	public final static DataAccessFacade DATA = new DataAccessFacade();
 
 	SystemController ci = new SystemController();
 	
@@ -55,8 +53,14 @@ public class LibrarySystem  extends JFrame implements LibWindow {
 		// TaoWu start
 		AddBookCopyWindow.INSTANCE,
 		AddBookWindow.INSTANCE,
-		PrintCheckedRecordWindow.INSTANCE
+		PrintCheckedRecordWindow.INSTANCE,
 		// TaoWu end
+		//Ryan
+		CheckoutWindow.INSTANCE,
+		//Charles
+		CheckOverDueWindow.INSTANCE,
+		//Feven
+		AddANewMemberWindow.INSTANCE 
 	};
     	
 	public static void hideAllWindows() {
@@ -112,54 +116,65 @@ public class LibrarySystem  extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
- 	   // TaoWu start
-	   addBookCopy = new JMenuItem("Add a bookCopy");
-	   addBookCopy.addActionListener(new AddBookCopyListener());
-	   addBook = new JMenuItem("Add a book");
-	   addBook.addActionListener(new AddBookListener());
-	   printCheckRecord = new JMenuItem("Print the checked record");
-	   printCheckRecord.addActionListener(new PrintCheckedRecordListener());
-	   addBookCopy.setEnabled(false);
-	   addBook.setEnabled(false);
-	   printCheckRecord.setEnabled(false);
-	   // TaoWu end
+// 	   // TaoWu start
+//	   addBookCopy = new JMenuItem("Add a bookCopy");
+//	   addBookCopy.addActionListener(new AddBookCopyListener());
+//	   addBook = new JMenuItem("Add a book");
+//	   addBook.addActionListener(new AddBookListener());
+//	   printCheckRecord = new JMenuItem("Print the checked record");
+//	   printCheckRecord.addActionListener(new PrintCheckedRecordListener());
+//	   addBookCopy.setEnabled(false);
+//	   addBook.setEnabled(false);
+//	   printCheckRecord.setEnabled(false);
+//	   // TaoWu end
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
- 	   // TaoWu start
-	   options.add(addBookCopy);
-	   options.add(addBook);
-	   options.add(printCheckRecord);
-	   // TaoWu end
- 	//added 4/6 @rstephens:
- 	   librarianOptions = new JMenu("Librarian"); 
- 	   menuBar.add(librarianOptions);
- 	   librarianOptions.setVisible(false);
- 	   
- 	   adminOptions = new JMenu("Admin");
- 	   menuBar.add(adminOptions);
-   	   adminOptions.setVisible(false);
-   	   
- 	 	//visibility set by login credentials
-	 	   if(SystemController.currentAuth == Auth.LIBRARIAN) {
-	 		  librarianOptions.setVisible(true);
-	 		  LibrarySystem.INSTANCE.repaint();
-	 	   }
-	 	  if(SystemController.currentAuth == Auth.ADMIN) {
-	 		  adminOptions.setVisible(true);
-	 		  LibrarySystem.INSTANCE.repaint();
-	 	  }
-	 	 if(SystemController.currentAuth == Auth.BOTH) {
-	 		librarianOptions.setVisible(true);
-	 		 adminOptions.setVisible(true);
-	 		  LibrarySystem.INSTANCE.repaint();
-	 	 }	 	   
+// 	   // TaoWu start
+//	   options.add(addBookCopy);
+//	   options.add(addBook);
+//	   options.add(printCheckRecord);
+//	   // TaoWu end
 
- 	   //TODO set menu items
- 	   //newMember, addBookCopy, addBook;
- 	   //checkout, printCheckoutRecord, checkOverdue;
-	 //=====================   
-    }
+}
+	
+	class CheckoutListener implements ActionListener{
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			CheckoutWindow.INSTANCE.init();
+			Util.centerFrameOnDesktop(CheckoutWindow.INSTANCE);
+			CheckoutWindow.INSTANCE.setVisible(true);
+	}
+		
+	}
+	
+	class CheckOverdueListener implements ActionListener{
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		LibrarySystem.hideAllWindows();
+		CheckOverDueWindow.INSTANCE.init();
+		Util.centerFrameOnDesktop(CheckOverDueWindow.INSTANCE);
+		CheckOverDueWindow.INSTANCE.setVisible(true);
+		
+	}
+		
+	}
+	//============================
+	
+	class AddNewMemberListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			AddANewMemberWindow.INSTANCE.init();
+			Util.centerFrameOnDesktop(AddANewMemberWindow.INSTANCE);
+			AddANewMemberWindow.INSTANCE.setVisible(true);
+		}
+		
+	}
     
     class LoginListener implements ActionListener {
 
@@ -271,6 +286,65 @@ public class LibrarySystem  extends JFrame implements LibWindow {
 	@Override
 	public void isInitialized(boolean val) {
 		isInitialized =val;
+		
+	}
+
+
+	public void initHiddenMenuItems() {
+	 	//added 4/6 @rstephens:
+	 	   librarianOptions = new JMenu("Librarian"); 
+	 	   menuBar.add(librarianOptions);
+	 	   librarianOptions.setVisible(false);
+	 	   
+	 	   adminOptions = new JMenu("Admin");
+	 	   menuBar.add(adminOptions);
+	   	   adminOptions.setVisible(false);
+	   	   
+	 	 	//visibility set by login credentials
+		 	   if(SystemController.currentAuth == Auth.LIBRARIAN) {
+		 		  librarianOptions.setVisible(true);
+		 		  LibrarySystem.INSTANCE.repaint();
+		 	   }
+		 	  if(SystemController.currentAuth == Auth.ADMIN) {
+		 		  adminOptions.setVisible(true);
+		 		  LibrarySystem.INSTANCE.repaint();
+		 	  }
+		 	 if(SystemController.currentAuth == Auth.BOTH) {
+		 		librarianOptions.setVisible(true);
+		 		 adminOptions.setVisible(true);
+		 		  LibrarySystem.INSTANCE.repaint();
+		 	 }	 	   
+
+		 //=====================   
+	    
+		 //implemented 4/7 @rstephens	 
+		 //Ryan
+	 	checkout = new JMenuItem("Checkout Book");
+	 	checkout.addActionListener(new CheckoutListener());
+	 	librarianOptions.add(checkout);
+	 	//Charles
+	 	checkOverdue = new JMenuItem("Check Ovedue Book");
+	 	checkOverdue.addActionListener(new CheckOverdueListener());
+	 	librarianOptions.add(checkOverdue);
+	 	
+	 	//Feven
+	 	newMember = new JMenuItem("Add New Member");
+	 	newMember.addActionListener(new AddNewMemberListener());
+	 	adminOptions.add(newMember);
+	 	
+	 	//Tao's windows
+	 	addBookCopy = new JMenuItem("Add Book Copy");
+	 	addBookCopy.addActionListener(new AddBookCopyListener());
+	 	adminOptions.add(addBookCopy);
+	 	
+	 	addBook = new JMenuItem("Add Book");
+	 	addBook.addActionListener(new AddBookListener());
+	 	adminOptions.add(addBook);
+	 	
+	 	printCheckoutRecord = new JMenuItem("Print Checkout Record");
+	 	printCheckoutRecord.addActionListener(new PrintCheckedRecordListener());
+	 	librarianOptions.add(printCheckoutRecord);
+	 	//end Tao's windows
 		
 	}
     

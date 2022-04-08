@@ -75,6 +75,8 @@ public class TestData {
 		members.add(libraryMember);
 		// TaoWu end
 		
+		libraryMember.newCheckout(allBooks.get(0).getNextAvailableCopy());
+		
 		DataAccessFacade.loadMemberMap(members);	
 	}
 	
@@ -130,8 +132,8 @@ public class TestData {
 				CheckoutRecord c = new CheckoutRecord();
 				c.addCheckoutRecordEntries(new CheckoutRecordEntry(LocalDate.of(2020, 11, 2),
 						LocalDate.of(2020, 11, 2), allBooks.get(0).getCopies()[0]));
-				c.addCheckoutRecordEntries(new CheckoutRecordEntry(LocalDate.of(2020, 6, 2),
-						LocalDate.of(2020, 5, 2), allBooks.get(0).getCopies()[0]));
+				c.addCheckoutRecordEntries(new CheckoutRecordEntry(LocalDate.of(2030, 1, 2),
+						LocalDate.of(2030, 5, 2), allBooks.get(0).getCopies()[0]));
 				add(c);
 			}
 		};

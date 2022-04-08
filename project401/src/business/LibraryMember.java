@@ -33,7 +33,9 @@ final public class LibraryMember extends Person implements Serializable {
 		return memberId;
 	}
 
-	
+	public void newCheckout(BookCopy book) {
+		this.checkoutRecord.addCheckoutRecordEntries(new CheckoutRecordEntry(book));
+	}
 	
 	@Override
 	public String toString() {
