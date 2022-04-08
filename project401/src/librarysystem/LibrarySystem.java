@@ -27,6 +27,8 @@ import librarysystem.*;
 
 public class LibrarySystem  extends JFrame implements LibWindow {
 
+	private static final long serialVersionUID = 1L;
+
 	public final static DataAccessFacade DATA = new DataAccessFacade();
 
 	SystemController ci = new SystemController();

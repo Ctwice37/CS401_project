@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class CheckoutWindow extends JFrame implements LibWindow{
@@ -37,6 +38,9 @@ public class CheckoutWindow extends JFrame implements LibWindow{
 	private JTextField isbnTextField;
 	private JTextField copyTextField;
 	
+	private boolean isAvailable = false;
+	private boolean checked = false;
+	
 	@Override
 	public boolean isInitialized() {
 		return isInitialized;
@@ -48,7 +52,7 @@ public class CheckoutWindow extends JFrame implements LibWindow{
 	}
 	
 	private CheckoutWindow() {
-		
+	
 	}
 	
 	private void clearTextFields() {
@@ -58,7 +62,7 @@ public class CheckoutWindow extends JFrame implements LibWindow{
 	}
 
 	@Override
-	public void init(){
+	public void init() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 461, 225);
 		contentPane = new JPanel();
@@ -68,90 +72,126 @@ public class CheckoutWindow extends JFrame implements LibWindow{
 		setTitle("Checkout");
 		getContentPane().setLayout(null);
 		contentPane.setLayout(null);
-		
+
 		idTextField = new JTextField();
-		idTextField.setBounds(212, 31, 86, 20);
+		idTextField.setBounds(154, 31, 144, 20);
 		getContentPane().add(idTextField);
 		idTextField.setColumns(10);
-		
+
 		isbnTextField = new JTextField();
-		isbnTextField.setBounds(212, 62, 86, 20);
+		isbnTextField.setBounds(154, 62, 144, 20);
 		getContentPane().add(isbnTextField);
 		isbnTextField.setColumns(10);
-		
+
 		copyTextField = new JTextField();
-		copyTextField.setBounds(212, 93, 86, 20);
+		copyTextField.setBounds(154, 93, 144, 20);
 		getContentPane().add(copyTextField);
 		copyTextField.setColumns(10);
-		
+
 		JLabel memberID = new JLabel("Member ID");
 		memberID.setHorizontalAlignment(SwingConstants.TRAILING);
-		memberID.setBounds(114, 34, 88, 14);
+		memberID.setBounds(47, 34, 88, 14);
 		getContentPane().add(memberID);
-		
+
+		JButton checkAvailabilityButton = new JButton("\u2714");
+		checkAvailabilityButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String id = idTextField.getText().trim();
+				String isbn = isbnTextField.getText().trim();
+				String copynum = copyTextField.getText().trim();
+				HashMap<String, LibraryMember> members = LibrarySystem.DATA.readMemberMap();
+				HashMap<String, Book> books = LibrarySystem.DATA.readBooksMap();
+				Book b = books.get(isbn);
+				System.out.println(b.toString());
+				if (id.isEmpty() || isbn.isEmpty()) {
+					JOptionPane.showMessageDialog(contentPane, "Fields must be nonempty");
+				}
+				if (!members.containsKey(id)) {
+					JOptionPane.showMessageDialog(contentPane, "Member ID not found");
+				}
+				if (!books.containsKey(isbn)) {
+					JOptionPane.showMessageDialog(contentPane, "ISBN not found");
+				}
+				else if(!b.isAvailable()){
+					JOptionPane.showMessageDialog(contentPane, "No Available Copies");
+				}
+				else {	
+					JOptionPane.showMessageDialog(contentPane, "Checkout Available");
+				checked = true;
+				isAvailable = true;
+				}
+			}
+		});
+
+		checkAvailabilityButton.setBounds(308, 62, 89, 58);
+		contentPane.add(checkAvailabilityButton);
+
 		JButton submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				String id = idTextField.getText().trim();
 				String isbn = isbnTextField.getText().trim();
 				String copynum = copyTextField.getText().trim();
-				
-				if(id.isEmpty() || isbn.isEmpty()) {
-					JOptionPane.showMessageDialog(contentPane,"Fields must be nonempty");
-				}
-				HashMap<String, LibraryMember> members = LibrarySystem.DATA.readMemberMap();
-//				System.out.println(members.toString()); // for testing purposes
-				HashMap<String, Book> books = LibrarySystem.DATA.readBooksMap();
-				System.out.println(books.toString()); //for testing purposes
-				
-				if(!members.containsKey(id)) {
-					JOptionPane.showMessageDialog(contentPane,"Member ID not found");
-					CheckoutWindow.INSTANCE.clearTextFields();
-				}
-				if(!books.containsKey(isbn)) {
-					JOptionPane.showMessageDialog(contentPane,"ISBN not found");
-					CheckoutWindow.INSTANCE.clearTextFields();
-				}
-				else {
-				Book checkoutBook = books.get(isbn);
-				BookCopy copy;
-					if(copynum.isEmpty()) {
-						copy = checkoutBook.getNextAvailableCopy();
-					}else {
-						copy = checkoutBook.getCopy(Integer.parseInt(copynum));
+				if (checked) {
+
+					if (isAvailable == false) {
+						JOptionPane.showMessageDialog(contentPane, "Not Available.");
+					} else {
+						HashMap<String, Book> books = LibrarySystem.DATA.readBooksMap();
+						Book checkoutBook = books.get(isbn);
+						BookCopy copy;
+						if (copynum.isEmpty()) {
+							copy = checkoutBook.getNextAvailableCopy();
+						} else {
+							copy = checkoutBook.getCopy(Integer.parseInt(copynum));
+						}
+						if (copy != null) {
+							LibrarySystem.DATA.saveCheckoutRecord(id, copy);
+							JOptionPane.showMessageDialog(contentPane, "Checkout added to Records");
+							CheckoutWindow.INSTANCE.clearTextFields();
+						} else {
+							System.out.println("Error! Record not saved!"); // testing
+						}
 					}
-				
-				LibrarySystem.DATA.saveCheckoutRecord(id, copy);
-					
+
 				}
-				
+				// if not checked
+				else {
+					JOptionPane.showMessageDialog(contentPane, "Please Check Availability");
+				}
 			}
 		});
-		
-		submitButton.setBounds(209, 124, 89, 23);
+
+		submitButton.setBounds(57, 124, 89, 23);
 		getContentPane().add(submitButton);
-		
+
 		JButton backButton = new JButton("Back");
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-	    			LibrarySystem.hideAllWindows();
-	    			LibrarySystem.INSTANCE.setVisible(true);		
-				}		
-			});
-		backButton.setBounds(114, 124, 89, 23);
+				LibrarySystem.hideAllWindows();
+				LibrarySystem.INSTANCE.setVisible(true);
+			}
+		});
+		backButton.setBounds(164, 124, 89, 23);
 		getContentPane().add(backButton);
-		
+
 		JLabel copyLabel = new JLabel("Copy Number");
 		copyLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		copyLabel.setBounds(114, 65, 88, 14);
+		copyLabel.setBounds(56, 96, 88, 14);
 		contentPane.add(copyLabel);
-		
+
 		JLabel isbnLabel = new JLabel("ISBN");
 		isbnLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		isbnLabel.setBounds(114, 96, 88, 14);
+		isbnLabel.setBounds(56, 65, 88, 14);
 		contentPane.add(isbnLabel);
-		
+
+		JLabel lblNewLabel = new JLabel("Check Availability");
+		lblNewLabel.setBounds(308, 34, 89, 14);
+		contentPane.add(lblNewLabel);
+
 		isInitialized(true);
 	}
+
 }

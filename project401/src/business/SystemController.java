@@ -10,13 +10,14 @@ import dataaccess.Auth;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessFacade;
 import dataaccess.User;
+import librarysystem.LibrarySystem;
 
 public class SystemController implements ControllerInterface {
 	public static Auth currentAuth = null;
 	
+	
 	public void login(String id, String password) throws LoginException {
-		DataAccess da = new DataAccessFacade();
-		HashMap<String, User> map = da.readUserMap();
+		HashMap<String, User> map =  LibrarySystem.DATA.readUserMap();
 		if(!map.containsKey(id)) {
 			throw new LoginException("ID " + id + " not found");
 		}
@@ -29,17 +30,15 @@ public class SystemController implements ControllerInterface {
 	}
 	@Override
 	public List<String> allMemberIds() {
-		DataAccess da = new DataAccessFacade();
 		List<String> retval = new ArrayList<>();
-		retval.addAll(da.readMemberMap().keySet());
+		retval.addAll(LibrarySystem.DATA.readMemberMap().keySet());
 		return retval;
 	}
 	
 	@Override
 	public List<String> allBookIds() {
-		DataAccess da = new DataAccessFacade();
 		List<String> retval = new ArrayList<>();
-		retval.addAll(da.readBooksMap().keySet());
+		retval.addAll(LibrarySystem.DATA.readBooksMap().keySet());
 		return retval;
 	}
 	
@@ -51,9 +50,9 @@ public class SystemController implements ControllerInterface {
 		 * @return book
 		 */
 		public String searchBookByIsbn(String isbnNum) {
-			DataAccess da = new DataAccessFacade();
+			HashMap<String, Book> allBooks = LibrarySystem.DATA.readBooksMap();
 			StringBuffer sb = new StringBuffer();
-			for (Book b : da.readBooksMap().values()) {
+			for (Book b : allBooks.values()) {
 				if (isbnNum.equals(b.getIsbn())) {
 					List<Author> authorList = b.getAuthors();
 					String name = "";
@@ -85,9 +84,8 @@ public class SystemController implements ControllerInterface {
 		public boolean addBookCopyByIsbn(String isbnNum) {
 			boolean rs = true;
 			try {
-				DataAccess da = new DataAccessFacade();
 				List<Book> bl = new ArrayList<>();
-				for (Book b : da.readBooksMap().values()) {
+				for (Book b : LibrarySystem.DATA.readBooksMap().values()) {
 					if (isbnNum.equals(b.getIsbn())) {
 						b.addCopy();
 						bl.add(b);
@@ -120,11 +118,14 @@ public class SystemController implements ControllerInterface {
 		 * @return true or false
 		 */
 		public boolean addBook(String isbnNum, String strTitle, String strMaxCheckoutLength, String strFirstName,
-				String strLastName, String strTelephone, String strBio, String strStreet, String strCity, String strState,
-				String strZip) {
+				String strLastName, String strTelephone, String strBio, String strStreet, String strCity,
+				String strState, String strZip) {
 			boolean rs = true;
 			try {
-				List<Book> bl = new ArrayList<>();
+				List<Book> bl = new ArrayList<Book>();
+				for (Book b : LibrarySystem.DATA.readBooksMap().values()) {
+					bl.add(b);
+				}
 				List<Author> authors = new ArrayList<Author>();
 				String[] strFirstNames = strFirstName.split(",");
 				String[] strLastNames = strLastName.split(",");
@@ -136,13 +137,13 @@ public class SystemController implements ControllerInterface {
 				String[] strZips = strZip.split(",");
 				for (int i = 0; i < strFirstNames.length; i++) {
 					Address address = new Address(strStreets[i], strCitys[i], strStates[i], strZips[i]);
-					Author author = new Author(strFirstNames[i], strLastNames[i], strTelephones[i], address, strBios[i]);
+					Author author = new Author(strFirstNames[i], strLastNames[i], strTelephones[i], address,
+							strBios[i]);
 					authors.add(author);
 				}
 				Book book = new Book(isbnNum, strTitle, Integer.parseInt(strMaxCheckoutLength), authors);
 				bl.add(book);
 				DataAccessFacade.loadBookMap(bl);
-
 			} catch (Exception ex) {
 				rs = false;
 				ex.printStackTrace();
@@ -156,9 +157,8 @@ public class SystemController implements ControllerInterface {
 		 * @return libraryMemberInfo
 		 */
 		public String searchLibraryMemberById(String memberId) {
-			DataAccess da = new DataAccessFacade();
 			StringBuffer sb = new StringBuffer();
-			for (LibraryMember lm : da.readMemberMap().values()) {
+			for (LibraryMember lm : LibrarySystem.DATA.readMemberMap().values()) {
 				if (memberId.equals(lm.getMemberId())) {
 					sb.append("<html><body>");
 					sb.append("memberId : " + lm.getMemberId() + "<br>");
